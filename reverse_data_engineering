@@ -1,0 +1,43 @@
+import pandas as pd
+import numpy as np
+
+np.random.seed(42)  # For reproducibility
+
+# Define the number of samples
+n_samples = 100
+
+# Generate data
+data = {
+    'SN': np.arange(1, n_samples + 1),
+    'Maternal_address': np.random.choice(['Within town', 'Outside town'], size=n_samples, p=[0.891, 0.109]),
+    'Gestational_age': np.random.choice(['Term', 'Preterm'], size=n_samples, p=[0.793, 0.207]),
+    'Birth_weight': np.random.choice(['Low', 'Normal', 'High'], size=n_samples, p=[0.37, 0.516, 0.114]),
+    'Gender': np.random.choice(['Male', 'Female'], size=n_samples, p=[0.551, 0.449]),
+    'Period_of_admission': np.random.choice(['1st trimester', '2nd trimester', '3rd trimester', '4th trimester'], size=n_samples, p=[0.259, 0.225, 0.259, 0.257]),
+    'Neonatal_jaundice': np.random.choice(['Yes', 'No'], size=n_samples, p=[0.15, 0.85]),
+    'TB': np.round(np.random.uniform(0.1, 15.0, size=n_samples), 2),
+    'CB': np.round(np.random.uniform(0.0, 5.0, size=n_samples), 2),
+    'PCV': np.round(np.random.uniform(30.0, 70.0, size=n_samples), 2),  # PCV values between 30 and 70
+    'Maternal_age': np.random.randint(18, 45, size=n_samples),
+    'Parity': np.random.choice(['Primigravida', 'Secundigravida', 'Multigravida'], size=n_samples),
+    'Blood_group': np.random.choice(['A', 'B', 'AB', 'O'], size=n_samples),
+    'Mode_of_delivery': np.random.choice(['Cs', 'Vaginal birth'], size=n_samples),
+    'Previous_jaundice_child': np.random.choice(['Yes', 'No'], size=n_samples, p=[0.1, 0.9]),
+    'Mortality': np.random.choice(['Yes', 'No'], size=n_samples, p=[0.129, 0.871]),
+    'Morbidity': np.random.choice(['Yes', 'No'], size=n_samples, p=[0.2, 0.8])
+}
+
+# Create DataFrame
+df = pd.DataFrame(data)
+
+# Apply logic to ensure conditions when Neonatal_jaundice is 'Yes'
+condition = df['Neonatal_jaundice'] == 'Yes'
+df.loc[condition, 'TB'] = np.round(np.random.uniform(15.1, 20.0, size=condition.sum()), 2)
+df.loc[condition, 'CB'] = np.round(np.random.uniform(5.1, 10.0, size=condition.sum()), 2)
+df.loc[condition, 'PCV'] = np.round(np.random.uniform(30.0, 39.9, size=condition.sum()), 2)  # Ensure PCV is less than 40
+
+# Display the first few rows of the DataFrame
+print(df.head())
+
+# Save to CSV
+df.to_csv('neonates_baseline_info.csv', index=False)
